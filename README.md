@@ -10,7 +10,9 @@ the demo is a jquery plugin which implements full screen scroll
   (function($){
    //do something
   })(jQuery)
+  
+  //1.避免全局依赖
+  //2.避免第三方破坏
+  //3.兼容jQuery操作符‘$’和jQuery
   ```
-  1.避免全局依赖<br/>
-  2.避免第三方破坏<br/>
-  3.兼容jQuery操作符‘$’和jQuery<br/>
+  
