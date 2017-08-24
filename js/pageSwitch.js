@@ -1,6 +1,7 @@
 (function ($) {
 
 	var _prefix = (function(temp){
+		console.dir(temp);
 		var aPrefix = ['webkit','Moz','o','ms'],
 			props = '';
 		for (var i in aPrefix) {
@@ -10,7 +11,7 @@
 			} 
 		}
 
-	})()
+	})(document.createElement(PageSwitch));
 	var privateFun = function () {
 		// 私有方法
 	}
@@ -27,12 +28,14 @@
 			init : function () {
 				var me = this;
 				me.selectors = me.settings.selectors;
-				me.sections = me.selectors.sections;
-				me.section = me.selectors.section;
+				me.sections = me.element.find(me.selectors.sections);
+				me.section = me.sections.find(me.selectors.section);
 
 				me.duration = me.settings.duration == 'vertical' ? true:false;
 				me.pagesCount = me.pagesCount();
-				me.index = (me.settings.index >= 0 && me.settings.index <= pagesCount)?me.settings.index : 0; 
+				me.index = (me.settings.index >= 0 && me.settings.index <= me.pagesCount)?me.settings.index : 0; 
+
+				me.canScroll = true;
 
 				if(me.duration){
 					me._initLayout();
@@ -83,13 +86,13 @@
 			/*说明：实现分页的dome结构及css样式*/
 			_initPaging : function () {
 				var me = this,
-					pageClass = me.selectors.page.substring(1),
-					activeClass = me.selectors.active.substring(1);
+					pageClass = me.selectors.page.substring(1);
+					me.activeClass = me.selectors.active.substring(1);
 				var pageHtml = '<ul class=' + pageClass + '>';
 				for (var i = 0; i < me.pagesCount; i++) {
-					
-					pageHtml += '<li></li>';
-				}
+						pageHtml += '<li></li>';
+					}
+				pageHtml += '</ul>';
 				me.element.append(pageHtml);
 				var pages = me.element.find(me.selectors.page);
 				me.pageItem = pages.find('li');
@@ -112,12 +115,15 @@
 
 				// 绑定鼠标滚轮事件
 				me.element.on('mouseswheel DOMMouseScroll',function(e){
-					var della = e.originalEvent.wheelDalta || -e.originalEvent.detail;
-					if(della > 0 && (me.index && !me.settings.loop|| me.settings.loop)){
-						me.prev();
-					}else if(della < 0 && (me.index < (me.pagesCount -1) && !me.settings.loop || me.settings.loop )){
-						me.next();
+					if(me.canScroll){
+						var delta = e.originalEvent.wheelDalta || -e.originalEvent.detail;
+						if(delta > 0 && (me.index && !me.settings.loop|| me.settings.loop)){
+							me.prev();
+						}else if(delta < 0 && (me.index < (me.pagesCount -1) && !me.settings.loop || me.settings.loop )){
+							me.next();
+						}	
 					}
+					
 
 				})
 
@@ -134,7 +140,7 @@
 				}
 
 				// 浏览器窗口大小改变后。windown.resize()事件
-				%(window).resize(function(){
+				$(window).resize(function(){
 					var currentlength= me.switchLength(),
 						offset = me.settings.direction?me.section.eq(me.index).offset.top:me.section.eq(me.index).offset().left;
 					if(Math.abs(offset) > currentlength/2 && me.index <(me.pagesCount -1)){
@@ -148,13 +154,39 @@
 
 				// transitionend 事件
 				me.sections.on('transitionend webkitTransitionEnd oTransitionEnd otransitionend',function(){
+					me.canScroll = true;
 					if(me.settings.callback && type(me.settings.callback) == 'function'){
 						me.settings.callback();
 					}
-				})
+				});
 
+			},
+
+			/*说明：滑动动画*/
+			_scrollPage : function(){
+				var me = this,
+					dest = me.section.eq(me.index).position();
+				if(!dest) return;
+				me.canScroll = false;
+				if(_prefix){
+					me.sections.css(_prefix + 'transition','all' + me.settings.duration + 'ms' + me.settings.easing);
+					var translate = me.direction ? 'translateY(-' + dest.top + 'px)' : 'translateX(-' + dest.left + 'px)';
+					me.sections.css(_prefix + 'transform',translate);
+				}else{
+					var animateCss = me.direction ? {top : -dest.top} : {left : -dest.left};
+					me.sections.animate(animateCss,me.settings.duration,function(){
+						me.canScroll = true;
+						if(me.settings.callback && $.type(me.settings.callback) == 'function'){
+							me.settings.callback();
+						}
+					});
+				}
+
+				if(me.settings.pagination){
+					me.pageItem.eq(me.index).addClass(me.activeClass).sibling('li').removeClass(me.activeClass);
+				}
 			}
-		}
+		};
 
 		return PageSwitch;
 	})();
