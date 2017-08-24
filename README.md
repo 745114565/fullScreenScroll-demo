@@ -21,24 +21,23 @@ the demo is a jquery plugin which implements full screen scroll
 
        即给jQuery命名空间下添加新的全局函数，也称为静态方法。
 
-``` javascript
-jQuery.myPlugin = function(){
-  //do something
- }
-// 
-```
-
-     例如：`$.Ajax()`、`$.extend()`
+    ``` javascript
+    jQuery.myPlugin = function(){
+      //do something
+     }
+    // 
+    ```
+    例如：`$.Ajax()`、`$.extend()`<br/>
 
  	 2.对象级别组件开发<br/>
    		即挂载在jQuery原型吓得方法，这样通过选择器获取的jQuery对象实例也能共享该方法，也称为动态方法。
 
-  ```javascript
-    $.fn.myPlungin = function(){
-       //do something
-    };
-   //这里的$.fn === $.prototype
-  ```
+     ```javascript
+       $.fn.myPlungin = function(){
+          //do something
+       };
+      //这里的$.fn === $.prototype
+     ```
     例如：`addClass()`、`attr()`等，需要创建实例来调用。
 
   * 链式调用
