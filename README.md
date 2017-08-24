@@ -16,10 +16,10 @@ the demo is a jquery plugin which implements full screen scroll
   //3.兼容jQuery操作符‘$’和jQuery
    ```
 
-  * 开发方式
-      1.类级别组件开发
+  * 开发方式<br/>
+      1.类级别组件开发<br/>
 
-      ​	即给jQuery命名空间下添加新的全局函数，也称为静态方法。
+       即给jQuery命名空间下添加新的全局函数，也称为静态方法。
 
 ``` javascript
 jQuery.myPlugin = function(){
@@ -28,15 +28,15 @@ jQuery.myPlugin = function(){
 // 
 ```
 
-​      例如：`$.Ajax()`、`$.extend()`
+     例如：`$.Ajax()`、`$.extend()`
 
-​	 2.对象级别组件开发
+ 	 2.对象级别组件开发<br/>
    		即挂载在jQuery原型吓得方法，这样通过选择器获取的jQuery对象实例也能共享该方法，也称为动态方法。
 
   ```javascript
-$.fn.myPlungin = function(){
-   //do something
-};
+    $.fn.myPlungin = function(){
+       //do something
+    };
    //这里的$.fn === $.prototype
   ```
     例如：`addClass()`、`attr()`等，需要创建实例来调用。
@@ -54,12 +54,11 @@ $.fn.myPlungin = function(){
          *-- return this 返回当前对象，类维护插件的链式调用
          *-- each 循环实现每个元素的访问
          **/
-
        ```
 
 
   * 单例模式
-        ``` javascript
+    ``` javascript
       $.fn.myPlugin = function(){
         var me = $(this),
           instance = me.data('myPlugin');
@@ -73,6 +72,4 @@ $.fn.myPlungin = function(){
        * - 如果实例存在则不需要创建实例
        * - 利用data来存放插件对象的实例
        */
-        ```
-
-      ​
+    ```
