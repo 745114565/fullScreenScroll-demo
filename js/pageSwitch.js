@@ -12,9 +12,7 @@
 		}
 
 	})(document.createElement(PageSwitch));
-	var privateFun = function () {
-		// 私有方法
-	}
+
 	// 插件构造方法
 	var PageSwitch = (function () {
 		function PageSwitch(element,options) {
@@ -26,18 +24,19 @@
 			/*说明：初始化插件*/
 			/*实现初始化dom结构，布局，分页及绑定事件*/
 			init : function () {
+				console.log('初始化插件-------------------------开始----------------------');
 				var me = this;
 				me.selectors = me.settings.selectors;
 				me.sections = me.element.find(me.selectors.sections);
 				me.section = me.sections.find(me.selectors.section);
 
-				me.duration = me.settings.duration == 'vertical' ? true:false;
+				me.direction = me.settings.direction == 'vertical' ? true:false;
 				me.pagesCount = me.pagesCount();
 				me.index = (me.settings.index >= 0 && me.settings.index <= me.pagesCount)?me.settings.index : 0; 
 
 				me.canScroll = true;
 
-				if(me.duration){
+				if(!me.direction || me.index){
 					me._initLayout();
 				}
 				if(me.settings.pagination){
@@ -46,6 +45,8 @@
 
 
 				me._initEvent();
+				console.log('初始化插件-------------------------结束----------------------');
+
 			},
 			/*说明：获取滑动页面数量*/
 			pagesCount : function () {
@@ -54,8 +55,10 @@
 			},
 			/*说明：获取滑动的宽度（横屏滑动）或高度（竖屏滑动）*/
 			switchLength : function () {
-				return this.direction ? this.element.height : this.element.width
+				return this.direction == 1 ? this.element.height : this.element.width
 			},
+
+			/*向上（前）滑动一页*/
 			prev : function(){
 				var me = this;
 				if(me.index > 0){
@@ -66,6 +69,8 @@
 				}
 				me._scrollPage();
 			},
+
+			/*向下（后）滑动一页*/
 			next : function(){
 				var me = this;
 				if(me.index < me.pagesCount){
@@ -75,16 +80,26 @@
 				}
 				me._scrollPage();
 			},
+
 			/*说明：主要正对横屏情况进行页面布局*/
 			_initLayout : function () {
+				console.log('开始布局----------------------');
 				var me = this;
-				var width = (me.pagesCount * 100) + '%';
-				cellWidth = (100/me.pagesCount).toFixed(2)+'%';
-				me.sections.width(width);
-				me.section.width(cellWidth).css('float','left');
+				if(!me.direction){
+					var width = (me.pagesCount * 100) + '%',
+						cellWidth = (100/me.pagesCount).toFixed(2)+'%';
+
+					me.sections.width(width);
+					me.section.width(cellWidth).css('float','left');
+				}
+				if(me.index){
+					me._scrollPage(true);
+				}
+				
 			},
 			/*说明：实现分页的dome结构及css样式*/
 			_initPaging : function () {
+				console.log('初始化分页----------------------');
 				var me = this,
 					pageClass = me.selectors.page.substring(1);
 					me.activeClass = me.selectors.active.substring(1);
@@ -93,6 +108,7 @@
 						pageHtml += '<li></li>';
 					}
 				pageHtml += '</ul>';
+				console.log(pageHtml);
 				me.element.append(pageHtml);
 				var pages = me.element.find(me.selectors.page);
 				me.pageItem = pages.find('li');
@@ -106,17 +122,18 @@
 			},
 			/*说明：初始化插件事件*/
 			_initEvent : function () {
-				// 分页事件
+				// 分页绑定点击事件
 				var me = this;
-				me.element.on('click',me.selectors.pages + 'li',function () {
+				me.element.on('click',me.selectors.page + ' li',function () {
 					me.index = $(this).index();
 					me._scrollPage();
 				})
 
 				// 绑定鼠标滚轮事件
-				me.element.on('mouseswheel DOMMouseScroll',function(e){
+				me.element.on('mousewheel DOMMouseScroll',function(e){
+					e.preventDefault();
+					var delta = e.originalEvent.wheelDelta || -e.originalEvent.detail;
 					if(me.canScroll){
-						var delta = e.originalEvent.wheelDalta || -e.originalEvent.detail;
 						if(delta > 0 && (me.index && !me.settings.loop|| me.settings.loop)){
 							me.prev();
 						}else if(delta < 0 && (me.index < (me.pagesCount -1) && !me.settings.loop || me.settings.loop )){
@@ -163,10 +180,12 @@
 			},
 
 			/*说明：滑动动画*/
-			_scrollPage : function(){
-				var me = this,
-					dest = me.section.eq(me.index).position();
+			_scrollPage : function(init){
+				console.log('页面滑动了-----------------------------------');
+				var me = this;
+				var	dest = me.section.eq(me.index).position();
 				if(!dest) return;
+				
 				me.canScroll = false;
 				if(_prefix){
 					me.sections.css(_prefix + 'transition','all' + me.settings.duration + 'ms' + me.settings.easing);
@@ -182,8 +201,8 @@
 					});
 				}
 
-				if(me.settings.pagination){
-					me.pageItem.eq(me.index).addClass(me.activeClass).sibling('li').removeClass(me.activeClass);
+				if(me.settings.pagination && !init){
+					me.pageItem.eq(me.index).addClass(me.activeClass).siblings('li').removeClass(me.activeClass);
 				}
 			}
 		};
@@ -194,6 +213,7 @@
 
 	// jQuery插件挂载
 	$.fn.PageSwitch = function (options) {
+		console.log('挂在成功！--------------------------------')
 		return this.each(function () {
 			var me = $(this),
 				instance = me.data('PageSwitch');
@@ -210,8 +230,8 @@
 	// 插件默认参数
 	$.fn.PageSwitch.default = {
 		selectors : {
-			sections : 'sections',
-			section : 'section',
+			sections : '.sections',
+			section : '.section',
 			page : '.pages',
 			active : '.active'
 		},

@@ -31,3 +31,36 @@ html,body{
 #section3{
 	background-image: url(../images/4.jpg);
 }
+
+/*分页样式*/
+.pages{
+	position:fixed;
+	list-style: none;
+}
+.vertical.pages{
+	right: 10px;
+	top: 50%;
+}
+.horizontal.pages{
+	left: 50%;
+	bottom: 10px;
+}
+.pages li{
+	width: 8px;
+	height: 8px;
+	border-radius: 50%;
+	background: #fff;
+	margin: 10px 5px;
+	cursor: pointer;
+}
+.horizontal.pages li{
+	display: inline-block;
+	vertical-align: middle;
+}
+.pages li.active{
+	width: 14px;
+	height: 14px;
+	border: 2px solid #FFFE00;
+	background: none;
+	margin-left: 0;
+}
