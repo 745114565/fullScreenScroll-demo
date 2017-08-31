@@ -16,22 +16,55 @@ html,body{
 	-webkit-background-size: cover;
 	background-size: cover;
 	background-position: 50% 50%;
-	text-align: center;
-	color: white;
+	
 }
 #section0{
+	color: #fff;
+	text-shadow:1px 1px 1px #333;
 	background-image: url(../images/1.jpg);
 }
 #section1{
+	color: #fff;
+	text-shadow:1px 1px 1px #333;
 	background-image: url(../images/2.jpg);
 }
 #section2{
 	background-image: url(../images/3.jpg);
+	color: #fff;
+	text-shadow:1px 1px 1px #666;
 }
 #section3{
+	color: #008283;
 	background-image: url(../images/4.jpg);
+	text-shadow:1px 1px 1px #fff;
 }
 
+#section0 p{
+	color: #F1FF00;
+}
+#section3 p{
+	color: #00A3AF;
+}	
+
+.left{
+	float: left;
+}
+h1{
+	font-size: 6em;
+	font-weight: normal;
+}
+p{
+	font-size: 2em;
+	margin:0.5em 0 2em 0;
+}
+.intro{
+	position: absolute;
+	top: 50%;
+	width: 100%;
+	-webkit-transform: translateY(-50%);
+	transform: translateY(-50%);
+	text-align: center;
+}
 /*分页样式*/
 .pages{
 	position:fixed;
@@ -63,4 +96,57 @@ html,body{
 	border: 2px solid #FFFE00;
 	background: none;
 	margin-left: 0;
+}
+
+#section0 .title{
+	-webkit-transform: translateX(-100%);
+	transform: translateX(-100%);
+	-webkit-animation: sectitle0 1s ease-in-out 100ms forwards;
+	animation: sectitle0 1s ease-in-out 100ms forwards;
+}
+#section0 p{
+			-webkit-transform: translateX(100%);
+			transform: translateX(100%);
+			-webkit-animation: sec0 1s ease-in-out 100ms forwards;
+			animation: sec0 1s ease-in-out 100ms forwards;
+		}
+@-webkit-keyframes sectitle0{
+	0%{
+		-webkit-transform: translateX(-100%);
+		transform: translateX(-100%);
+	}
+	100%{
+		-webkit-transform: translateX(0);
+		transform: translateX(0);
+	}
+}
+@keyframes sectitle0{
+	0%{
+		-webkit-transform: translateX(-100%);
+		transform: translateX(-100%);
+	}
+	100%{
+		-webkit-transform: translateX(0);
+		transform: translateX(0);
+	}
+}
+@-webkit-keyframes sec0{
+	0%{
+		-webkit-transform: translateX(100%);
+		transform: translateX(100%);
+	}
+	100%{
+		-webkit-transform: translateX(0);
+		transform: translateX(0);
+	}
+}
+@keyframes sec0{
+	0%{
+		-webkit-transform: translateX(100%);
+		transform: translateX(100%);
+	}
+	100%{
+		-webkit-transform: translateX(0);
+		transform: translateX(0);
+	}
 }

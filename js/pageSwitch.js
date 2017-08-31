@@ -55,7 +55,7 @@
 			},
 			/*说明：获取滑动的宽度（横屏滑动）或高度（竖屏滑动）*/
 			switchLength : function () {
-				return this.direction == 1 ? this.element.height : this.element.width
+				return this.direction == true ? this.element.height : this.element.width
 			},
 
 			/*向上（前）滑动一页*/
@@ -157,26 +157,31 @@
 				}
 
 				// 浏览器窗口大小改变后。windown.resize()事件
+				/*为了不频繁的调用resize的回调放大，做延迟*/
+				var resizeId;
 				$(window).resize(function(){
-					var currentlength= me.switchLength(),
-						offset = me.settings.direction?me.section.eq(me.index).offset.top:me.section.eq(me.index).offset().left;
-					if(Math.abs(offset) > currentlength/2 && me.index <(me.pagesCount -1)){
-						me.index++;
-					}
-					if(me.index){
-						me._scrollPage();
-					}
-
+					clearTimeout(resizeId);
+					resizeId = setTimeout(function () {
+						var currentlength= me.switchLength(),
+						offset = me.settings.direction?me.section.eq(me.index).offset().top:me.section.eq(me.index).offset().left;
+						if(Math.abs(offset) > currentlength/2 && me.index < (me.pagesCount -1)){
+							me.index++;
+						}
+						if(me.index){
+							me._scrollPage();
+						}
+					},500);
 				});
 
 				// transitionend 事件
-				me.sections.on('transitionend webkitTransitionEnd oTransitionEnd otransitionend',function(){
-					me.canScroll = true;
-					if(me.settings.callback && type(me.settings.callback) == 'function'){
-						me.settings.callback();
-					}
-				});
-
+				if(_prefix){
+					me.sections.on('transitionend webkitTransitionEnd oTransitionEnd otransitionend',function(){
+						me.canScroll = true;
+						if(me.settings.callback && type(me.settings.callback) == 'function'){
+							me.settings.callback();
+						}
+					});
+				}
 			},
 
 			/*说明：滑动动画*/
